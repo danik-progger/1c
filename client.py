@@ -38,7 +38,8 @@ async def send_request_to_get_answer_from_scientists(url):
                 if "Your number is" in data:
                     print(data)
                 if "Your number is correct" in data:
-                    return True
+                    return "correct"
+                return "try another one"
             await asyncio.sleep(1)
 
 def client_loop(server_url, name):
@@ -52,7 +53,13 @@ def client_loop(server_url, name):
         if action == "guess":
             guess_value = int(input("Enter your guess: "))
             print(guess(server_url, name, guess_value))
-            guessed = experiment_started = asyncio.run(send_request_to_get_answer_from_scientists(f"{server_url}/last_guess/{name}"))
+            answer = ""
+            while answer == "":
+                answer = asyncio.run(send_request_to_get_answer_from_scientists(f"{server_url}/last_guess/{name}"))
+                print("Answer", answer)
+                if answer == "correct":
+                    print(guessed)
+                    guessed = True
         elif action == "history":
             print(get_history(name, server_url))
         else:
@@ -62,4 +69,6 @@ def client_loop(server_url, name):
 if __name__ == "__main__":
     print("Dear student, welcome to the guessing experiment!")
     server_url, name = register_user()
-    client_loop(server_url, name)
+    while True:
+        client_loop(server_url, name)
+        print("You've completed previous experiment. You will get a message when another one will start")

@@ -51,5 +51,3 @@ if __name__ == "__main__":
     server_url = config["SERVER_URL"]
     while True:
         scientists_loop(server_url)
-
-

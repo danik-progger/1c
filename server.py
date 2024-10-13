@@ -58,6 +58,13 @@ async def start_experiment(name: str):
     else:
         return {"message": "experiment is not started yet"}
 
+@app.get("/get_history/{name}")
+async def start_experiment(name: str):
+    if participants[name]['status'] == "active" or participants[name]['status'] == "posted new guess":
+        return {"history": participants[name]["history"]}
+    else:
+        return {"message": "you have no history"}
+
 @app.post("/guess")
 async def guess(guess: Guess):
     name = guess.name
@@ -115,7 +122,10 @@ async def get_participants():
 @app.get("/leaderboard")
 async def get_leaderboard():
     sorted_leaderboard = sorted(leaderboard, key=lambda x: participants[x]['attempts'])
-    return {"leaderboard": sorted_leaderboard}
+    final_leaderboard = []
+    for el in sorted_leaderboard:
+        final_leaderboard.append([el, participants[el]['attempts']])
+    return {"leaderboard": final_leaderboard}
 
 
 if __name__ == '__main__':
